@@ -5,7 +5,6 @@ import org.apache.spark.sql.SparkSession;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -17,7 +16,7 @@ public class YqgSparkUtil {
   private final static String metastoreUris = "thrift://192.168.99.100:9083";
   private final static String hdfsUrl = "hdfs://192.168.99.100:8020/user/hive/warehouse";
 
-  public List<Class> allowedClasses = Arrays.asList(String.class, Float.class, Double.class, Integer.class);
+  //public List<Class> allowedClasses = Arrays.asList(String.class, Float.class, Double.class, Integer.class);
 
   private static final SparkSession.Builder sessionBuilder = SparkSession.builder()
       .appName("yqg-stat-spark")
