@@ -3,10 +3,7 @@
  */
 
 import lombok.Data;
-import org.apache.spark.sql.Dataset;
-import org.apache.spark.sql.Row;
-import org.apache.spark.sql.SaveMode;
-import org.apache.spark.sql.SparkSession;
+import spark.YqgSparkUtil;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -25,35 +22,17 @@ public class test {
   }
 
   @Data
-  public static class UPerson extends Person{
+  public static class UPerson extends Person {
     public String test;
   }
 
   public static void main(String[] a) throws InterruptedException {
 
-
-
-    SparkSession spark = SparkSession
-        .builder()
-        .appName("SparkSessionZipsExample")
-        .master("spark://10.171.10.106:7077")
-        .config("spark.dynamicAllocation.enabled", "false")
-        .config("hive.metastore.uris", "thrift://10.171.10.106:9083")
-        .config("spark.driver.port","10086")
-        .config("spark.blockManager.port","10087")
-        //.config("spark.submit.deployMode", "cluster")
-        //.config("spark.metastore.warehouse.dir", "hdfs://:8020/user/hive/warehouse")
-        .config("hive.exec.dynamic.partition.mode", "nonstrict")
-        //.enableHiveSupport()
-        .getOrCreate();
-
-
-    //spark.sql("create table if not exists test4(id int,name string) ROW FORMAT delimited fields terminated by '\\001' STORED AS TEXTFILE");
-    //spark.sql("drop table if exists test5");
-    //spark.sql("create table test5 (id int, name string, test string) partitioned by (date string)  STORED AS parquet");
+//    Map<String, Class> cols = new HashMap<>();
+//    cols.put("date", String.class);
+//    YqgSparkUtil.createTableWithClass("person", UPerson.class, cols);
 
     List<UPerson> personList = new ArrayList<UPerson>();
-    // Create an instance of a Bean class
     UPerson person = new UPerson();
     person.name = "啊";
     person.id = 11;
@@ -73,25 +52,72 @@ public class test {
     p1.date = "33";
     personList.add(p1);
 
-
-    // Encoders are created for Java beans
-    //Encoder<Person> personEncoder = Encoders.bean(Person.class);
-
-    Dataset<Row> javaBeanDS = spark.createDataFrame(
-        personList,
-        UPerson.class
-    );
+    YqgSparkUtil.insert(personList, "person", UPerson.class);
 
 
-    javaBeanDS.registerTempTable("testk");
-
-    Dataset<Row> ds = spark.sql("select id, name, test, date from testk");
-    ds.show();
-//    ds.write().insertInto("test5");
 //
-//    Dataset<Row> t = spark.sql("select * from test5").select("id");
-//    t.show();
-    ds.write().option("header","true").format("com.databricks.spark.csv").mode(SaveMode.Overwrite).save("/zmzhu/test");
+//
+//
+//    SparkSession spark = SparkSession
+//        .builder()
+//        .appName("SparkSessionZipsExample")
+//        .master("spark://192.168.99.100:7077")
+//        .config("spark.dynamicAllocation.enabled", "false")
+//        .config("hive.metastore.uris", "thrift://192.168.99.100:9083")
+//        .config("spark.driver.port","10086")
+//        .config("spark.blockManager.port","10087")
+//        //.config("spark.submit.deployMode", "cluster")
+//        //.config("spark.metastore.warehouse.dir", "hdfs://:8020/user/hive/warehouse")
+//        .config("hive.exec.dynamic.partition.mode", "nonstrict")
+//        .enableHiveSupport()
+//        .getOrCreate();
+//
+//
+//    //spark.sql("create table if not exists test4(id int,name string) ROW FORMAT delimited fields terminated by '\\001' STORED AS TEXTFILE");
+//    //spark.sql("drop table if exists test5");
+//    //spark.sql("create table test5 (id int, name string, test string) partitioned by (date string)  STORED AS parquet");
+//
+//    List<UPerson> personList = new ArrayList<UPerson>();
+//    // Create an instance of a Bean class
+//    UPerson person = new UPerson();
+//    person.name = "啊";
+//    person.id = 11;
+//    person.date = "22";
+//    person.test = "99";
+//
+//    personList.add(person);
+//    UPerson p = new UPerson();
+//    p.name = "aa";
+//    p.id = 12;
+//    p.date = "22";
+//    personList.add(p);
+//
+//    UPerson p1 = new UPerson();
+//    p1.name = "aa";
+//    p1.id = 12;
+//    p1.date = "33";
+//    personList.add(p1);
+//
+//
+//    // Encoders are created for Java beans
+//    //Encoder<Person> personEncoder = Encoders.bean(Person.class);
+//
+//    Dataset<Row> javaBeanDS = spark.createDataFrame(
+//        personList,
+//        UPerson.class
+//    );
+//
+//
+//    javaBeanDS.registerTempTable("testk");
+//
+//    Dataset<Row> ds = spark.sql("select id, name, test, date from testk");
+//    ds.show();
+////    ds.write().insertInto("test5");
+////
+////    Dataset<Row> t = spark.sql("select * from test5").select("id");
+////    t.show();
+//    ds.write().option("header","true").format("com.databricks.spark.csv").mode(SaveMode.Overwrite).saveAsTable("testz");
+
 //
 //    Dataset<Row> rs = spark.sql("select * from test4");
 //    Encoder<HashMap> encoder = Encoders.bean(HashMap.class);
