@@ -126,7 +126,7 @@ public class test {
 //    String path = "examples/src/main/resources/people.json";
 //    Dataset<Person> peopleDS = spark.read().json(path).as(personEncoder);
 //    peopleDS.show();
-    Thread.sleep(100000);
+    //Thread.sleep(100000);
   }
 
 
