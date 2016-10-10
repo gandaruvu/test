@@ -37,6 +37,7 @@ public class YqgSparkUtil {
       .config("hive.metastore.uris", metastoreUris)
       .config("spark.driver.port", "10086")
       .config("spark.blockManager.port", "10087")
+      .config("hive.exec.dynamic.partition.mode", "nonstrict")
       .enableHiveSupport();
 
   public static SparkSession getSession() {
