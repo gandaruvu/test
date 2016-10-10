@@ -91,7 +91,7 @@ public class test {
 //
 //    Dataset<Row> t = spark.sql("select * from test5").select("id");
 //    t.show();
-    ds.write().option("header","true").format("com.databricks.spark.csv").mode(SaveMode.Overwrite).save("/tmp/test");
+    ds.write().option("header","true").format("com.databricks.spark.csv").mode(SaveMode.Overwrite).save("/zmzhu/test");
 //
 //    Dataset<Row> rs = spark.sql("select * from test4");
 //    Encoder<HashMap> encoder = Encoders.bean(HashMap.class);
@@ -126,7 +126,7 @@ public class test {
 //    String path = "examples/src/main/resources/people.json";
 //    Dataset<Person> peopleDS = spark.read().json(path).as(personEncoder);
 //    peopleDS.show();
-    //Thread.sleep(100000);
+    Thread.sleep(1000000);
   }
 
 
