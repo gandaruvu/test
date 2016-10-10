@@ -36,13 +36,13 @@ public class test {
     SparkSession spark = SparkSession
         .builder()
         .appName("SparkSessionZipsExample")
-        .master("spark://127.0.0.1:7077")
+        .master("spark://10.171.10.106:7077")
         .config("spark.dynamicAllocation.enabled", "false")
-        .config("hive.metastore.uris", "thrift://127.0.0.1:9083")
+        .config("hive.metastore.uris", "thrift://10.171.10.106:9083")
         //.config("spark.submit.deployMode", "cluster")
         //.config("spark.metastore.warehouse.dir", "hdfs://:8020/user/hive/warehouse")
         .config("hive.exec.dynamic.partition.mode", "nonstrict")
-        .enableHiveSupport()
+        //.enableHiveSupport()
         .getOrCreate();
 
 
