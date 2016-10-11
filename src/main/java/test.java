@@ -9,6 +9,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public class test {
@@ -16,7 +17,7 @@ public class test {
   @Data
   public static class Person implements Serializable {
     public String date;
-    public int id;
+    public Integer id;
     public String name;
     public HashMap<String, Integer> person;
   }
@@ -28,9 +29,9 @@ public class test {
 
   public static void main(String[] a) throws InterruptedException {
 
-//    Map<String, Class> cols = new HashMap<>();
-//    cols.put("date", String.class);
-//    YqgSparkUtil.createTableWithClass("person", UPerson.class, cols);
+    Map<String, Class> cols = new HashMap<>();
+    cols.put("date", String.class);
+    YqgSparkUtil.createTableWithClass("person", UPerson.class, cols);
 
     List<UPerson> personList = new ArrayList<UPerson>();
     UPerson person = new UPerson();
@@ -53,6 +54,8 @@ public class test {
     personList.add(p1);
 
     YqgSparkUtil.insert(personList, "person", UPerson.class);
+
+    YqgSparkUtil.output("select * from person");
 
 
 //

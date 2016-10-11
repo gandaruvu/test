@@ -3,6 +3,7 @@ package spark;
 import com.google.inject.Singleton;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
+import org.apache.spark.sql.SaveMode;
 import org.apache.spark.sql.SparkSession;
 import org.apache.spark.sql.types.Decimal;
 
@@ -20,6 +21,7 @@ public class YqgSparkUtil {
   private final static String host = "101.200.76.17";
   private final static String sparkMaster = "spark://" + host + ":7077";
   private final static String metastoreUris = "thrift://" + host + ":9083";
+  private final static String env = "yqg_dev";
 
   private final static Map<Class, String> classMap = new HashMap<Class, String>() {{
     put(String.class, "string");
@@ -93,5 +95,9 @@ public class YqgSparkUtil {
 
     ds.write().insertInto(tableName);
 
+  }
+
+  public static void output(String sql) {
+    getSession().sql(sql).write().option("header","true").format("com.databricks.spark.csv").mode(SaveMode.Overwrite).save("/tmp/test");
   }
 }
