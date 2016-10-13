@@ -3,13 +3,13 @@
  */
 
 import lombok.Data;
-import spark.YqgSparkUtil;
+import spark.YqgSparkSqlUtil;
+import tables.HiveStaticTable;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 
 public class test {
@@ -18,7 +18,7 @@ public class test {
   public static class Person implements Serializable {
     public String date;
     public Integer id;
-    public String name;
+    public String nameTest;
     public HashMap<String, Integer> person;
   }
 
@@ -29,33 +29,32 @@ public class test {
 
   public static void main(String[] a) throws InterruptedException {
 
-    Map<String, Class> cols = new HashMap<>();
-    cols.put("date", String.class);
-    YqgSparkUtil.createTableWithClass("person", UPerson.class, cols);
+    YqgSparkSqlUtil.dropTable(HiveStaticTable.CASH_LOAN_USER_BASE_INFO.tableName);
+    YqgSparkSqlUtil.createTableWithClass(HiveStaticTable.CASH_LOAN_USER_BASE_INFO.tableName, UPerson.class);
 
     List<UPerson> personList = new ArrayList<UPerson>();
     UPerson person = new UPerson();
-    person.name = "啊";
+    person.nameTest = "啊";
     person.id = 11;
     person.date = "22";
     person.test = "99";
 
     personList.add(person);
     UPerson p = new UPerson();
-    p.name = "aa";
+    p.nameTest = "aa";
     p.id = 12;
     p.date = "22";
     personList.add(p);
 
     UPerson p1 = new UPerson();
-    p1.name = "aa";
+    p1.nameTest = "aa";
     p1.id = 12;
     p1.date = "33";
     personList.add(p1);
 
-    YqgSparkUtil.insert(personList, "person", UPerson.class);
+    YqgSparkSqlUtil.insert(personList, HiveStaticTable.CASH_LOAN_USER_BASE_INFO.tableName, UPerson.class);
 
-    YqgSparkUtil.output("select * from person");
+    //YqgSparkUtil.output("select * from person");
 
 
 //
@@ -155,7 +154,7 @@ public class test {
 //    String path = "examples/src/main/resources/people.json";
 //    Dataset<Person> peopleDS = spark.read().json(path).as(personEncoder);
 //    peopleDS.show();
-    Thread.sleep(1000000);
+    //Thread.sleep(1000000);
   }
 
 
