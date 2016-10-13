@@ -9,7 +9,6 @@ import org.apache.spark.sql.types.Decimal;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -118,7 +117,7 @@ public class YqgSparkSqlUtil {
       cols[i] = underlineToCamel(cols[i]);
     }
 
-    String tmpTable = "tmp" + (new Date()).toString();
+    String tmpTable = "tmp";
     javaBeanDS.registerTempTable(tmpTable);
     javaBeanDS.show();
 
