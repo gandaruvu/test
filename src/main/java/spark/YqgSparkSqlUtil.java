@@ -1,19 +1,15 @@
 package spark;
 
 import com.google.inject.Singleton;
-import com.yqg.core.util.clock.YqgClock;
-import com.yqg.core.util.exception.YqgException;
-import com.yqg.core.util.exception.YqgExceptionType;
-import com.yqg.core.util.ioc.ZookeeperUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
 import org.apache.spark.sql.types.Decimal;
-import spark.HiveTablePartition;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,7 +22,7 @@ public class YqgSparkSqlUtil {
 
   private final static String sparkMaster = "local";
   private final static String metastoreUris = "thrift://101.201.81.111:29083";
-  public static String envPrefix = ZookeeperUtil.environment + "_";
+  public static String envPrefix = "dev_";
 
   private final static Map<Class, String> classMap = new HashMap<Class, String>() {{
     put(String.class, "string");
@@ -122,7 +118,7 @@ public class YqgSparkSqlUtil {
       cols[i] = underlineToCamel(cols[i]);
     }
 
-    String tmpTable = "tmp" + YqgClock.now();
+    String tmpTable = "tmp" + (new Date()).toString();
     javaBeanDS.registerTempTable(tmpTable);
     javaBeanDS.show();
 
@@ -139,7 +135,7 @@ public class YqgSparkSqlUtil {
    */
   public static void dropPartition(String tableName, Map<String, Object> partitionCondition) {
     if (partitionCondition == null || partitionCondition.keySet().size() == 0) {
-      throw new YqgException(YqgExceptionType.COMMON_SERVER_ERROR, "condition cannot be empty");
+      throw new RuntimeException("condition cannot be empty");
     }
     StringBuilder builder = new StringBuilder("ALTER TABLE ");
     builder.append(envPrefix)
