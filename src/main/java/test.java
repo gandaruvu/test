@@ -31,7 +31,7 @@ public class test {
   public static void main(String[] a) throws InterruptedException {
 
     YqgSparkSqlUtil.dropTable(HiveStaticTable.CASH_LOAN_USER_BASE_INFO.tableName);
-    YqgSparkSqlUtil.createTableWithClass(HiveStaticTable.CASH_LOAN_USER_BASE_INFO.tableName, UPerson.class);
+    YqgSparkSqlUtil.createTableWithClass(HiveStaticTable.CASH_LOAN_USER_BASE_INFO.tableName, CashLoanUserCreditInfoHiveRecord.class);
 
     List<CashLoanUserCreditInfoHiveRecord> records = new ArrayList<>();
     records.add(new CashLoanUserCreditInfoHiveRecord(){{
