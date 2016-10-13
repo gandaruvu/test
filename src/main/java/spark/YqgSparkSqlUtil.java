@@ -20,7 +20,7 @@ import java.util.Map;
 public class YqgSparkSqlUtil {
 
   private final static String sparkMaster = "spark://10.171.10.106:7077";
-  private final static String metastoreUris = "thrift://10.171.10.106:29083";
+  private final static String metastoreUris = "thrift://10.171.10.106:9083";
   public static String envPrefix = "dev_";
 
   private final static Map<Class, String> classMap = new HashMap<Class, String>() {{
