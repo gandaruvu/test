@@ -4,6 +4,7 @@
 
 import lombok.Data;
 import spark.YqgSparkSqlUtil;
+import tables.CashLoanUserCreditInfoHiveRecord;
 import tables.HiveStaticTable;
 
 import java.io.Serializable;
@@ -32,27 +33,35 @@ public class test {
     YqgSparkSqlUtil.dropTable(HiveStaticTable.CASH_LOAN_USER_BASE_INFO.tableName);
     YqgSparkSqlUtil.createTableWithClass(HiveStaticTable.CASH_LOAN_USER_BASE_INFO.tableName, UPerson.class);
 
-    List<UPerson> personList = new ArrayList<UPerson>();
-    UPerson person = new UPerson();
-    person.nameTest = "啊";
-    person.id = 11;
-    person.date = "22";
-    person.test = "99";
+    List<CashLoanUserCreditInfoHiveRecord> records = new ArrayList<>();
+    records.add(new CashLoanUserCreditInfoHiveRecord(){{
+      setTimeFinished("2034-23-23 99:99:22");
+      setFinishDate("2034-23-23");
+      setCreateDate("2032-223-23");
+      setStatus("健全成功");
+      setLoanAccountId(13L);
+      setMobileNumber("1323232");
+    }});
 
-    personList.add(person);
-    UPerson p = new UPerson();
-    p.nameTest = "aa";
-    p.id = 12;
-    p.date = "22";
-    personList.add(p);
+    records.add(new CashLoanUserCreditInfoHiveRecord(){{
+      setTimeFinished("2034-22-23 99:99:22");
+      setFinishDate("2034-22-23");
+      setCreateDate("2032-223-23");
+      setStatus("健全成功1");
+      setLoanAccountId(14L);
+      setMobileNumber("1323232");
+    }});
 
-    UPerson p1 = new UPerson();
-    p1.nameTest = "aa";
-    p1.id = 12;
-    p1.date = "33";
-    personList.add(p1);
+    records.add(new CashLoanUserCreditInfoHiveRecord(){{
+      setTimeFinished("2034-23-23 99:99:22");
+      setFinishDate("2034-23-23");
+      setCreateDate("2032-225-23");
+      setStatus("健全成功");
+      setLoanAccountId(15L);
+      setMobileNumber("1323232");
+    }});
 
-    YqgSparkSqlUtil.insert(personList, HiveStaticTable.CASH_LOAN_USER_BASE_INFO.tableName, UPerson.class);
+    YqgSparkSqlUtil.insert(records, HiveStaticTable.CASH_LOAN_USER_BASE_INFO.tableName, CashLoanUserCreditInfoHiveRecord.class);
 
     //YqgSparkUtil.output("select * from person");
 
