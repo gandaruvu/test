@@ -62,7 +62,7 @@ public class test {
     }});
 
     YqgSparkSqlUtil.insert(records, HiveStaticTable.CASH_LOAN_USER_BASE_INFO.tableName, CashLoanUserCreditInfoHiveRecord.class);
-
+    Thread.sleep(100000);
     //YqgSparkUtil.output("select * from person");
 
 
