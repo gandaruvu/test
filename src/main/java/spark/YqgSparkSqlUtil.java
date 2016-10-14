@@ -162,7 +162,7 @@ public class YqgSparkSqlUtil {
 
     Dataset<Row> javaBeanDS = session.createDataFrame(rows, schema);
 
-    javaBeanDS.write().mode(SaveMode.Append).insertInto(tableName);
+    javaBeanDS.write().mode(SaveMode.Append).saveAsTable(tableName);
   }
 
   /**
