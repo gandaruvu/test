@@ -19,7 +19,7 @@ public class YqgSparkSqlUtil {
   private static YqgSparkConfig yqgSparkConfig = new YqgSparkConfig();
   private final static String sparkMaster = yqgSparkConfig.sparkMaster;
   private final static String metastoreUris = yqgSparkConfig.metastoreUris;
-  public static String envPrefix = "dev_";
+  public static String envPrefix = "test_";
 
   private final static Map<Class, HiveType> classMap = new HashMap<Class, HiveType>() {{
     put(String.class, HiveType.STRING);
