@@ -1,17 +1,14 @@
 package spark;
 
 import com.google.inject.Singleton;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.spark.sql.Dataset;
-import org.apache.spark.sql.Row;
-import org.apache.spark.sql.SparkSession;
-import org.apache.spark.sql.types.Decimal;
+import org.apache.hadoop.fs.LocalFileSystem;
+import org.apache.hadoop.hdfs.DistributedFileSystem;
+import org.apache.spark.sql.*;
+import org.apache.spark.sql.types.*;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by StevenZhu on 16/9/28.
@@ -19,19 +16,38 @@ import java.util.Map;
 @Singleton
 public class YqgSparkSqlUtil {
 
-  private final static String sparkMaster = "spark://10.171.10.106:7077";
-  private final static String metastoreUris = "thrift://10.171.10.106:9083";
+  private static YqgSparkConfig yqgSparkConfig = new YqgSparkConfig();
+  private final static String sparkMaster = yqgSparkConfig.sparkMaster;
+  private final static String metastoreUris = yqgSparkConfig.metastoreUris;
   public static String envPrefix = "dev_";
 
-  private final static Map<Class, String> classMap = new HashMap<Class, String>() {{
-    put(String.class, "string");
-    put(Integer.class, "int");
-    put(Long.class, "bigint");
-    put(Double.class, "double");
-    put(Decimal.class, "decimal");
-    put(Float.class, "float");
-    put(Boolean.class, "boolean");
+  private final static Map<Class, HiveType> classMap = new HashMap<Class, HiveType>() {{
+    put(String.class, HiveType.STRING);
+    put(Integer.class, HiveType.INT);
+    put(Long.class, HiveType.LONG);
+    put(Double.class, HiveType.DOUBLE);
+    put(Decimal.class, HiveType.DECIMAL);
+    put(Float.class, HiveType.FLOAT);
+    put(Boolean.class, HiveType.BOOLEAN);
   }};
+
+  public enum HiveType {
+    STRING("string", DataTypes.StringType),
+    INT("int", DataTypes.IntegerType),
+    LONG("bigint", DataTypes.LongType),
+    DOUBLE("double", DataTypes.DoubleType),
+    DECIMAL("decimal", DataTypes.FloatType),
+    FLOAT("float", DataTypes.FloatType),
+    BOOLEAN("boolean", DataTypes.BooleanType),;
+    public String typeName;
+    public DataType sparkStruct;
+
+    HiveType(String typeName, DataType sparkStruct) {
+      this.typeName = typeName;
+      this.sparkStruct = sparkStruct;
+    }
+
+  }
 
   private static final SparkSession.Builder sessionBuilder = SparkSession.builder()
       .appName("yqg-stat-spark")
@@ -40,6 +56,8 @@ public class YqgSparkSqlUtil {
       .config("spark.driver.port", "10086")
       .config("spark.blockManager.port", "10087")
       .config("hive.exec.dynamic.partition.mode", "nonstrict")
+      .config("fs.hdfs.impl", DistributedFileSystem.class.getName())
+      .config("fs.file.impl", LocalFileSystem.class.getName())
       .enableHiveSupport();
 
   public static SparkSession getSession() {
@@ -52,7 +70,7 @@ public class YqgSparkSqlUtil {
    * @param tableName table name. final table name will be {environment}_{tableName}
    * @param clazz     table Definition, only support some basic data types now. see classMap
    */
-  public static void createTableWithClass(String tableName, Class<? extends Serializable> clazz) {
+  public static void createTableWithClass(String tableName, Class clazz) {
     tableName = envPrefix + tableName;
     Map<String, Class> partitionCols = new HashMap<>();
 
@@ -60,10 +78,9 @@ public class YqgSparkSqlUtil {
     builder.append(tableName);
     builder.append("(");
     int cnt = 0;
-    for (Field field : clazz.getDeclaredFields()) {
-      if (!classMap.containsKey(field.getType())) {
-        continue;
-      }
+    Set<Field> fields = getAllowedFields(clazz);
+
+    for (Field field : fields) {
       // 检查是否partition字段
       HiveTablePartition annotation = field.getAnnotation(HiveTablePartition.class);
       if (annotation != null) {
@@ -74,12 +91,12 @@ public class YqgSparkSqlUtil {
       if (cnt != 0) {
         builder.append(",");
       }
-      builder.append(camelToUnderline(field.getName()) + " " + classMap.get(field.getType()));
+      builder.append(field.getName() + " " + classMap.get(field.getType()).typeName);
       cnt++;
     }
     builder.append(")");
     cnt = 0;
-    if (partitionCols != null && partitionCols.size() != 0) {
+    if (partitionCols.size() != 0) {
       builder.append("PARTITIONED BY (");
       for (Map.Entry<String, Class> stringClassEntry : partitionCols.entrySet()) {
         if (!classMap.containsKey(stringClassEntry.getValue())) {
@@ -88,7 +105,7 @@ public class YqgSparkSqlUtil {
         if (cnt != 0) {
           builder.append(",");
         }
-        builder.append(camelToUnderline(stringClassEntry.getKey()) + " " + classMap.get(stringClassEntry.getValue()));
+        builder.append(stringClassEntry.getKey() + " " + classMap.get(stringClassEntry.getValue()).typeName);
         cnt++;
       }
       builder.append(")");
@@ -108,22 +125,44 @@ public class YqgSparkSqlUtil {
   public static <T extends Serializable> void insert(List<T> values, String tableName, Class<T> clazz) {
     tableName = envPrefix + tableName;
     SparkSession session = getSession();
-    Dataset<Row> javaBeanDS = session.createDataFrame(
-        values,
-        clazz
-    );
-    String[] cols = session.table(tableName).columns();
-    for (int i = 0; i < cols.length; i++) {
-      cols[i] = underlineToCamel(cols[i]);
+
+    Set<Field> dataFields = getAllowedFields(clazz);
+    String[] columns = session.table(tableName).columns();
+    Map<String, Field> fieldMap = new HashMap<>();
+    dataFields.forEach(dataField -> fieldMap.put(dataField.getName().toLowerCase(), dataField));
+
+    List<Field> finalDataFields = new ArrayList<>();
+    for (String column : columns) {
+      if (fieldMap.containsKey(column)) {
+        finalDataFields.add(fieldMap.get(column));
+      } else {
+        dropColumn(tableName, column);
+      }
     }
 
-    String tmpTable = "tmp";
-    javaBeanDS.registerTempTable(tmpTable);
-    javaBeanDS.show();
+    List<StructField> structFields = new ArrayList<>();
+    finalDataFields.forEach(field -> structFields.add(DataTypes.createStructField(field.getName(), classMap.get(field.getType()).sparkStruct, true)));
+    StructType schema = DataTypes.createStructType(structFields);
 
-    Dataset<Row> ds = session.sql("select " + StringUtils.join(cols, ',') + " from " + tmpTable);
+    List<Row> rows = new ArrayList<>();
+    values.forEach(value -> {
+      List<Object> objects = new ArrayList<>();
+      for (Field field : finalDataFields) {
+        try {
+          field.setAccessible(true);
+          objects.add(field.get(value));
+        } catch (IllegalAccessException e) {
+          throw new RuntimeException("a");
+        }
+      }
 
-    ds.write().insertInto(tableName);
+      Row row = RowFactory.create(objects.toArray());
+      rows.add(row);
+    });
+
+    Dataset<Row> javaBeanDS = session.createDataFrame(rows, schema);
+
+    javaBeanDS.write().mode(SaveMode.Append).insertInto(tableName);
   }
 
   /**
@@ -134,7 +173,7 @@ public class YqgSparkSqlUtil {
    */
   public static void dropPartition(String tableName, Map<String, Object> partitionCondition) {
     if (partitionCondition == null || partitionCondition.keySet().size() == 0) {
-      throw new RuntimeException("condition cannot be empty");
+      throw new RuntimeException("a");
     }
     StringBuilder builder = new StringBuilder("ALTER TABLE ");
     builder.append(envPrefix)
@@ -147,7 +186,7 @@ public class YqgSparkSqlUtil {
       }
       builder.append(entry.getKey())
           .append("='")
-          .append(String.valueOf(partitionCondition))
+          .append(String.valueOf(entry.getValue()))
           .append("'");
       cnt++;
     }
@@ -155,58 +194,44 @@ public class YqgSparkSqlUtil {
     getSession().sql(builder.toString());
   }
 
+  public static void dropColumn(String tableName, String columnName) {
+    String dropSql = "alter table " + envPrefix + tableName + " drop if exists column " + columnName;
+    getSession().sql(dropSql);
+  }
+
+  public static void addColumn(String tableName, String columnName, Class columnClass) {
+    if (!classMap.containsKey(columnClass)) {
+      return;
+    }
+    String dropSql = "alter table " + envPrefix + tableName + " add columns (" + columnName + " " + classMap.get(columnClass).typeName + ")";
+    getSession().sql(dropSql);
+  }
+
   public static void dropTable(String tableName) {
-    getSession().sql("drop table " + envPrefix + tableName);
+    getSession().sql("DROP TABLE IF EXISTS " + envPrefix + tableName);
   }
 
   /**
    * output. not supported yet...
-   *
-   * @param sql
    */
   /*
   public static void output(String sql) {
     getSession().sql(sql).write().option("header", "true").format("com.databricks.spark.csv").mode(SaveMode.Overwrite).save("/tmp/test");
   }
   */
+  private static Set<Field> getAllowedFields(Class clazz) {
+    Set<Field> fields = new LinkedHashSet<>();
 
-
-  private static final char UNDERLINE = '_';
-
-  private static String camelToUnderline(String param) {
-    if (param == null || "".equals(param.trim())) {
-      return "";
-    }
-    int len = param.length();
-    StringBuilder sb = new StringBuilder(len);
-    for (int i = 0; i < len; i++) {
-      char c = param.charAt(i);
-      if (Character.isUpperCase(c)) {
-        sb.append(UNDERLINE);
-        sb.append(Character.toLowerCase(c));
-      } else {
-        sb.append(c);
+    for (Field field : clazz.getFields()) {
+      if (classMap.containsKey(field.getType())) {
+        fields.add(field);
       }
     }
-    return sb.toString();
-  }
-
-  private static String underlineToCamel(String param) {
-    if (param == null || "".equals(param.trim())) {
-      return "";
-    }
-    int len = param.length();
-    StringBuilder sb = new StringBuilder(len);
-    for (int i = 0; i < len; i++) {
-      char c = param.charAt(i);
-      if (c == UNDERLINE) {
-        if (++i < len) {
-          sb.append(Character.toUpperCase(param.charAt(i)));
-        }
-      } else {
-        sb.append(c);
+    for (Field field : clazz.getDeclaredFields()) {
+      if (classMap.containsKey(field.getType())) {
+        fields.add(field);
       }
     }
-    return sb.toString();
+    return fields;
   }
 }

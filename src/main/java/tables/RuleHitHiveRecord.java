@@ -1,5 +1,6 @@
 package tables;
 
+
 import lombok.Data;
 import spark.HiveTablePartition;
 
@@ -22,4 +23,5 @@ public class RuleHitHiveRecord implements Serializable {
   private String createDate;
   @HiveTablePartition
   private String finishDate;
+
 }
