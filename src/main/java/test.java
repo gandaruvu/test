@@ -4,8 +4,8 @@
 
 import lombok.Data;
 import spark.YqgSparkSqlUtil;
-import tables.CashLoanUserCreditInfoHiveRecord;
 import tables.HiveStaticTable;
+import tables.LoanCreditFeatureHiveRecord;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -30,11 +30,8 @@ public class test {
 
 
     YqgSparkSqlUtil.dropTable(HiveStaticTable.LOAN_CREDIT_FEATURE.tableName);
-    YqgSparkSqlUtil.createTableWithClass(HiveStaticTable.LOAN_CREDIT_FEATURE.tableName, CashLoanUserCreditInfoHiveRecord.class);
+    YqgSparkSqlUtil.createTableWithClass(HiveStaticTable.LOAN_CREDIT_FEATURE.tableName, LoanCreditFeatureHiveRecord.class);
 
-    YqgSparkSqlUtil.dropTable(HiveStaticTable.CASH_LOAN_USER_BASE_INFO.tableName);
-    YqgSparkSqlUtil.createTableWithClass(HiveStaticTable.CASH_LOAN_USER_BASE_INFO.tableName, CashLoanUserCreditInfoHiveRecord.class);
-//
 //    List<CashLoanUserCreditInfoHiveRecord> records = new ArrayList<>();
 //    records.add(new CashLoanUserCreditInfoHiveRecord(){{
 //      setTimeFinished("2034-23-23 99:99:22");
