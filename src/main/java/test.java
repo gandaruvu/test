@@ -4,11 +4,13 @@
 
 import lombok.Data;
 import spark.YqgSparkSqlUtil;
+import tables.CashLoanUserCreditInfoHiveRecord;
 import tables.HiveStaticTable;
-import tables.LoanCreditFeatureHiveRecord;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 
 public class test {
@@ -29,40 +31,40 @@ public class test {
   public static void main(String[] a) throws InterruptedException {
 
 
-    YqgSparkSqlUtil.dropTable(HiveStaticTable.LOAN_CREDIT_FEATURE.tableName);
-    YqgSparkSqlUtil.createTableWithClass(HiveStaticTable.LOAN_CREDIT_FEATURE.tableName, LoanCreditFeatureHiveRecord.class);
+    // YqgSparkSqlUtil.dropTable(HiveStaticTable.LOAN_CREDIT_FEATURE.tableName);
+    // YqgSparkSqlUtil.createTableWithClass(HiveStaticTable.LOAN_CREDIT_FEATURE.tableName, LoanCreditFeatureHiveRecord.class);
 
-//    List<CashLoanUserCreditInfoHiveRecord> records = new ArrayList<>();
-//    records.add(new CashLoanUserCreditInfoHiveRecord(){{
-//      setTimeFinished("2034-23-23 99:99:22");
-//      setFinishDate("2034-23-23");
-//      setCreateDate("2032-223-23");
-//      setStatus("健全成功");
-//      setLoanAccountId(13L);
-//      setMobileNumber("1323232");
-//    }});
-//
-//    records.add(new CashLoanUserCreditInfoHiveRecord(){{
-//      setTimeFinished("2034-22-23 99:99:22");
-//      setFinishDate("2034-22-23");
-//      setCreateDate("2032-223-23");
-//      setStatus("健全成功1");
-//      setLoanAccountId(14L);
-//      setMobileNumber("1323232");
-//    }});
-//
-//    records.add(new CashLoanUserCreditInfoHiveRecord(){{
-//      setTimeFinished("2034-23-23 99:99:22");
-//      setFinishDate("2034-23-23");
-//      setCreateDate("2032-225-23");
-//      setStatus("健全成功");
-//      setLoanAccountId(15L);
-//      setMobileNumber("1323232");
-//    }});
-//
-//    YqgSparkSqlUtil.insert(records, HiveStaticTable.CASH_LOAN_USER_BASE_INFO.tableName, CashLoanUserCreditInfoHiveRecord.class);
-//
-      Thread.sleep(100000);
+    List<CashLoanUserCreditInfoHiveRecord> records = new ArrayList<>();
+    records.add(new CashLoanUserCreditInfoHiveRecord() {{
+      setTimeFinished("2034-23-23 99:99:22");
+      setFinishDate("2034-23-23");
+      setCreateDate("2032-223-23");
+      setStatus("健全成功");
+      setLoanAccountId(13L);
+      setMobileNumber("1323232");
+    }});
+
+    records.add(new CashLoanUserCreditInfoHiveRecord() {{
+      setTimeFinished("2034-22-23 99:99:22");
+      setFinishDate("2034-22-23");
+      setCreateDate("2032-223-23");
+      setStatus("健全成功1");
+      setLoanAccountId(14L);
+      setMobileNumber("1323232");
+    }});
+
+    records.add(new CashLoanUserCreditInfoHiveRecord() {{
+      setTimeFinished("2034-23-23 99:99:22");
+      setFinishDate("2034-23-23");
+      setCreateDate("2032-225-23");
+      setStatus("健全成功");
+      setLoanAccountId(15L);
+      setMobileNumber("1323232");
+    }});
+
+    YqgSparkSqlUtil.insert(records, HiveStaticTable.CASH_LOAN_USER_BASE_INFO.tableName, CashLoanUserCreditInfoHiveRecord.class);
+
+    Thread.sleep(100000);
     //YqgSparkUtil.output("select * from person");
 
 
