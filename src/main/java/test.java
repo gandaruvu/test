@@ -39,7 +39,7 @@ public class test {
       setTimeFinished("2034-23-23 99:99:22");
       setFinishDate("12034-23-23");
       setCreateDate("12032-223-23");
-      setStatus("健全成功");
+      setStatus("健全1成功");
       setLoanAccountId(13L);
       setMobileNumber("1323232");
     }});
@@ -48,7 +48,7 @@ public class test {
       setTimeFinished("2034-22-23 99:99:22");
       setFinishDate("z2034-22-23");
       setCreateDate("z2032-223-23");
-      setStatus("健全成功1");
+      setStatus("健全成1功1");
       setLoanAccountId(14L);
       setMobileNumber("1323232");
     }});
@@ -58,7 +58,7 @@ public class test {
       setFinishDate("1z2034-23-23");
       setCreateDate("12032-225-23");
       setStatus("健全成功");
-      setLoanAccountId(15L);
+      setLoanAccountId(19L);
       setMobileNumber("1323232");
     }});
 
