@@ -36,8 +36,8 @@ public class test {
 
     List<CashLoanUserCreditInfoHiveRecord> records = new ArrayList<>();
     records.add(new CashLoanUserCreditInfoHiveRecord() {{
-      setTimeFinished("2034-23-23 99:99:22");
-      setFinishDate("12034-23-23");
+      setTimeFinished("222");
+      setFinishDate("11");
       setCreateDate("12032-223-23");
       setStatus("健全1成功");
       setLoanAccountId(13L);
@@ -45,8 +45,8 @@ public class test {
     }});
 
     records.add(new CashLoanUserCreditInfoHiveRecord() {{
-      setTimeFinished("2034-22-23 99:99:22");
-      setFinishDate("z12034-22-23");
+      setTimeFinished("222");
+      setFinishDate("11");
       setCreateDate("z2032-223-23");
       setStatus("健全成1功1");
       setLoanAccountId(14L);
@@ -54,8 +54,8 @@ public class test {
     }});
 
     records.add(new CashLoanUserCreditInfoHiveRecord() {{
-      setTimeFinished("2034-23-23 99:99:22");
-      setFinishDate("1z2034-23-23");
+      setTimeFinished("222");
+      setFinishDate("11");
       setCreateDate("12032-225-23");
       setStatus("健全成功");
       setLoanAccountId(19L);

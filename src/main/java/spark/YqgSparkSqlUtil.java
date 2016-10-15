@@ -234,4 +234,6 @@ public class YqgSparkSqlUtil {
     }
     return fields;
   }
+
+
 }
