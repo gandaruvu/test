@@ -55,7 +55,7 @@ public class test {
 
     records.add(new CashLoanUserCreditInfoHiveRecord() {{
       setTimeFinished("2034-23-23 99:99:22");
-      setFinishDate("12034-23-23");
+      setFinishDate("1z2034-23-23");
       setCreateDate("12032-225-23");
       setStatus("健全成功");
       setLoanAccountId(15L);
