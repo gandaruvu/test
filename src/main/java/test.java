@@ -36,7 +36,6 @@ public class test {
     //YqgSparkSqlUtil.getSession().sql("alter table testk replace columns (test string, aa int)");
     List<CashLoanUserCreditInfoHiveRecord> records = new ArrayList<>();
     records.add(new CashLoanUserCreditInfoHiveRecord() {{
-      setTimeFinished("2122");
       setFinishDate("11");
       setCreateDate("12032-223-23");
       setStatus("健全1成功");
@@ -45,7 +44,6 @@ public class test {
     }});
 
     records.add(new CashLoanUserCreditInfoHiveRecord() {{
-      setTimeFinished("222");
       setFinishDate("11");
       setCreateDate("z2032-223-23");
       setStatus("健全成1功1");
@@ -54,7 +52,6 @@ public class test {
     }});
 
     records.add(new CashLoanUserCreditInfoHiveRecord() {{
-      setTimeFinished("222");
       setFinishDate("11");
       setCreateDate("12032-225-23");
       setStatus("健全成功");

@@ -12,7 +12,7 @@ import java.io.Serializable;
 public class CashLoanUserCreditInfoHiveRecord implements Serializable {
   private String mobileNumber;
   private Long loanAccountId;
-  private String timeFinished;
+
   private String status;
 
   @HiveTablePartition
