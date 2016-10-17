@@ -52,7 +52,7 @@ public class test {
     }});
 
     records.add(new CashLoanUserCreditInfoHiveRecord() {{
-      setFinishDate("11");
+      setFinishDate("211");
       setCreateDate("12032-225-23");
       setStatus("健全成功");
       setLoanAccountId(19L);
