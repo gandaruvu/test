@@ -11,6 +11,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 
 public class test {
@@ -62,7 +64,19 @@ public class test {
       setMobileNumber("1323232");
     }});
 
-    YqgSparkSqlUtil.insert(records, HiveStaticTable.CASH_LOAN_USER_BASE_INFO.tableName, CashLoanUserCreditInfoHiveRecord.class);
+    ExecutorService ex = Executors.newFixedThreadPool(2);
+    ex.submit(new Runnable() {
+      @Override
+      public void run() {
+        YqgSparkSqlUtil.insert(records, HiveStaticTable.CASH_LOAN_USER_BASE_INFO.tableName, CashLoanUserCreditInfoHiveRecord.class);
+      }
+    });
+    ex.submit(new Runnable() {
+      @Override
+      public void run() {
+        YqgSparkSqlUtil.getSession().sql("select * from dev_"+HiveStaticTable.CASH_LOAN_USER_BASE_INFO.tableName).show();
+      }
+    });
 
     Thread.sleep(10000000);
     //YqgSparkUtil.output("select * from person");
