@@ -58,6 +58,11 @@ public class YqgSparkSqlUtil {
       .config("hive.exec.dynamic.partition.mode", "nonstrict")
       .config("fs.hdfs.impl", DistributedFileSystem.class.getName())
       .config("fs.file.impl", LocalFileSystem.class.getName())
+      .config("spark.dynamicAllocation.enabled", "true")
+      .config("spark.shuffle.service.enabled", "true")
+      .config("spark.dynamicAllocation.minExecutors", "0")
+      .config("spark.dynamicAllocation.maxExecutors", "1")
+      .config("spark.dynamicAllocation.initialExecutors", "1")
       .enableHiveSupport();
 
   public static SparkSession getSession() {
