@@ -61,9 +61,9 @@ public class YqgSparkSqlUtil {
       .config("spark.dynamicAllocation.enabled", true)
       .config("spark.shuffle.service.enabled", true)
       .config("spark.shuffle.service.port", 9099)
-      .config("spark.dynamicAllocation.minExecutors", 1)
-      .config("spark.dynamicAllocation.maxExecutors", 1)
-      .config("spark.dynamicAllocation.initialExecutors", 1)
+      .config("spark.dynamicAllocation.minExecutors", 2)
+      .config("spark.dynamicAllocation.maxExecutors", 2)
+      .config("spark.dynamicAllocation.initialExecutors", 2)
       .config("spark.executor.cores", 1)
       .enableHiveSupport();
 
