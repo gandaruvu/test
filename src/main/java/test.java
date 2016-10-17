@@ -4,9 +4,13 @@
 
 import lombok.Data;
 import spark.YqgSparkSqlUtil;
+import tables.CashLoanUserCreditInfoHiveRecord;
+import tables.HiveStaticTable;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 
 public class test {
@@ -29,48 +33,36 @@ public class test {
 
     // YqgSparkSqlUtil.dropTable(HiveStaticTable.LOAN_CREDIT_FEATURE.tableName);
     // YqgSparkSqlUtil.createTableWithClass(HiveStaticTable.LOAN_CREDIT_FEATURE.tableName, LoanCreditFeatureHiveRecord.class);
-    YqgSparkSqlUtil.getSession().sql("alter table testk replace columns (test string, aa int)");
-//    List<CashLoanUserCreditInfoHiveRecord> records = new ArrayList<>();
-//    records.add(new CashLoanUserCreditInfoHiveRecord() {{
-//      setTimeFinished("222");
-//      setFinishDate("11");
-//      setCreateDate("12032-223-23");
-//      setStatus("健全1成功");
-//      setLoanAccountId(13L);
-//      setMobileNumber("1323232");
-//    }});
-//
-//    records.add(new CashLoanUserCreditInfoHiveRecord() {{
-//      setTimeFinished("222");
-//      setFinishDate("11");
-//      setCreateDate("z2032-223-23");
-//      setStatus("健全成1功1");
-//      setLoanAccountId(14L);
-//      setMobileNumber("1323232");
-//    }});
-//
-//    records.add(new CashLoanUserCreditInfoHiveRecord() {{
-//      setTimeFinished("222");
-//      setFinishDate("11");
-//      setCreateDate("12032-225-23");
-//      setStatus("健全成功");
-//      setLoanAccountId(19L);
-//      setMobileNumber("1323232");
-//    }});
-//
-//    ExecutorService ex = Executors.newFixedThreadPool(2);
-//    ex.submit(new Runnable() {
-//      @Override
-//      public void run() {
-//        YqgSparkSqlUtil.insert(records, HiveStaticTable.CASH_LOAN_USER_BASE_INFO.tableName, CashLoanUserCreditInfoHiveRecord.class);
-//      }
-//    });
-//    ex.submit(new Runnable() {
-//      @Override
-//      public void run() {
-//        YqgSparkSqlUtil.getSession().sql("select * from dev_"+HiveStaticTable.CASH_LOAN_USER_BASE_INFO.tableName).show();
-//      }
-//    });
+    //YqgSparkSqlUtil.getSession().sql("alter table testk replace columns (test string, aa int)");
+    List<CashLoanUserCreditInfoHiveRecord> records = new ArrayList<>();
+    records.add(new CashLoanUserCreditInfoHiveRecord() {{
+      setTimeFinished("222");
+      setFinishDate("11");
+      setCreateDate("12032-223-23");
+      setStatus("健全1成功");
+      setLoanAccountId(13L);
+      setMobileNumber("1323232");
+    }});
+
+    records.add(new CashLoanUserCreditInfoHiveRecord() {{
+      setTimeFinished("222");
+      setFinishDate("11");
+      setCreateDate("z2032-223-23");
+      setStatus("健全成1功1");
+      setLoanAccountId(14L);
+      setMobileNumber("1323232");
+    }});
+
+    records.add(new CashLoanUserCreditInfoHiveRecord() {{
+      setTimeFinished("222");
+      setFinishDate("11");
+      setCreateDate("12032-225-23");
+      setStatus("健全成功");
+      setLoanAccountId(19L);
+      setMobileNumber("1323232");
+    }});
+
+    YqgSparkSqlUtil.insert(records, HiveStaticTable.CASH_LOAN_USER_BASE_INFO.tableName, CashLoanUserCreditInfoHiveRecord.class);
 
     Thread.sleep(10000000);
     //YqgSparkUtil.output("select * from person");

@@ -3,8 +3,14 @@ package spark;
 import com.google.inject.Singleton;
 import org.apache.hadoop.fs.LocalFileSystem;
 import org.apache.hadoop.hdfs.DistributedFileSystem;
-import org.apache.spark.sql.*;
-import org.apache.spark.sql.types.*;
+import org.apache.spark.sql.Dataset;
+import org.apache.spark.sql.Row;
+import org.apache.spark.sql.RowFactory;
+import org.apache.spark.sql.SparkSession;
+import org.apache.spark.sql.types.DataType;
+import org.apache.spark.sql.types.DataTypes;
+import org.apache.spark.sql.types.Decimal;
+import org.apache.spark.sql.types.StructType;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
@@ -138,36 +144,34 @@ public class YqgSparkSqlUtil {
     Map<String, Field> fieldMap = new HashMap<>();
     dataFields.forEach(dataField -> fieldMap.put(dataField.getName().toLowerCase(), dataField));
 
-    List<Field> finalDataFields = new ArrayList<>();
-    for (String column : columns) {
-      if (fieldMap.containsKey(column)) {
-        finalDataFields.add(fieldMap.get(column));
-      } else {
-        dropColumn(tableName, column);
-      }
-    }
+    StructType structType = session.table(tableName).schema();
 
-    List<StructField> structFields = new ArrayList<>();
-    finalDataFields.forEach(field -> structFields.add(DataTypes.createStructField(field.getName(), classMap.get(field.getType()).sparkStruct, true)));
-    StructType schema = DataTypes.createStructType(structFields);
+    Map<String, Field> finalDataFieldMap = new HashMap<>();
+    dataFields.forEach(dataField -> finalDataFieldMap.put(dataField.getName(), dataField));
 
     List<Row> rows = new ArrayList<>();
-    values.forEach(value -> {
-      List<Object> objects = new ArrayList<>();
-      for (Field field : finalDataFields) {
-        try {
-          field.setAccessible(true);
-          objects.add(field.get(value));
-        } catch (IllegalAccessException e) {
-          throw new RuntimeException("a");
-        }
-      }
 
-      Row row = RowFactory.create(objects.toArray());
+    values.forEach(value -> {
+      List<Object> rowObjects = new ArrayList<>();
+      for (String column : columns) {
+        try {
+          if (finalDataFieldMap.containsKey(column)) {
+            Field field = finalDataFieldMap.get(column);
+            field.setAccessible(true);
+            rowObjects.add(field.get(value));
+          } else {
+            rowObjects.add(null);
+          }
+        } catch (Exception ex) {
+          throw new RuntimeException("");
+        }
+
+      }
+      Row row = RowFactory.create(rowObjects.toArray());
       rows.add(row);
     });
 
-    Dataset<Row> javaBeanDS = session.createDataFrame(rows, schema);
+    Dataset<Row> javaBeanDS = session.createDataFrame(rows, structType);
 
     javaBeanDS.write().insertInto(tableName);
   }
