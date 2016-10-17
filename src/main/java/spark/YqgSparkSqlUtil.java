@@ -147,7 +147,7 @@ public class YqgSparkSqlUtil {
     StructType structType = session.table(tableName).schema();
 
     Map<String, Field> finalDataFieldMap = new HashMap<>();
-    dataFields.forEach(dataField -> finalDataFieldMap.put(dataField.getName(), dataField));
+    dataFields.forEach(dataField -> finalDataFieldMap.put(dataField.getName().toLowerCase(), dataField));
 
     List<Row> rows = new ArrayList<>();
 
