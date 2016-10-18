@@ -6,11 +6,11 @@ import lombok.Data;
 import spark.YqgSparkSqlUtil;
 import tables.CashLoanUserCreditInfoHiveRecord;
 import tables.HiveStaticTable;
+import tables.LoanCreditFeatureHiveRecord;
+import tables.RuleHitHiveRecord;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 
 public class test {
@@ -34,32 +34,15 @@ public class test {
     // YqgSparkSqlUtil.dropTable(HiveStaticTable.LOAN_CREDIT_FEATURE.tableName);
     // YqgSparkSqlUtil.createTableWithClass(HiveStaticTable.LOAN_CREDIT_FEATURE.tableName, LoanCreditFeatureHiveRecord.class);
     //YqgSparkSqlUtil.getSession().sql("alter table testk replace columns (test string, aa int)");
-    List<CashLoanUserCreditInfoHiveRecord> records = new ArrayList<>();
-    records.add(new CashLoanUserCreditInfoHiveRecord() {{
-      setFinishDate("11");
-      setCreateDate("12032-223-23");
-      setStatus("健全1成功");
-      setLoanAccountId(13L);
-      setMobileNumber("1323232");
-    }});
+    YqgSparkSqlUtil.envPrefix = "feat_";
+    YqgSparkSqlUtil.dropTable(HiveStaticTable.CASH_LOAN_USER_BASE_INFO.tableName);
+    YqgSparkSqlUtil.createTableWithClass(HiveStaticTable.CASH_LOAN_USER_BASE_INFO.tableName, CashLoanUserCreditInfoHiveRecord.class);
 
-    records.add(new CashLoanUserCreditInfoHiveRecord() {{
-      setFinishDate("11");
-      setCreateDate("z2032-223-23");
-      setStatus("健全成1功1");
-      setLoanAccountId(14L);
-      setMobileNumber("1323232");
-    }});
+    YqgSparkSqlUtil.dropTable(HiveStaticTable.RULE_HIT.tableName);
+    YqgSparkSqlUtil.createTableWithClass(HiveStaticTable.RULE_HIT.tableName, RuleHitHiveRecord.class);
 
-    records.add(new CashLoanUserCreditInfoHiveRecord() {{
-      setFinishDate("211");
-      setCreateDate("12032-225-23");
-      setStatus("健全成功");
-      setLoanAccountId(19L);
-      setMobileNumber("1323232");
-    }});
-
-    YqgSparkSqlUtil.insert(records, HiveStaticTable.CASH_LOAN_USER_BASE_INFO.tableName, CashLoanUserCreditInfoHiveRecord.class);
+    YqgSparkSqlUtil.dropTable(HiveStaticTable.LOAN_CREDIT_FEATURE.tableName);
+    YqgSparkSqlUtil.createTableWithClass(HiveStaticTable.LOAN_CREDIT_FEATURE.tableName, LoanCreditFeatureHiveRecord.class);
 
     Thread.sleep(10000000);
     //YqgSparkUtil.output("select * from person");

@@ -20,8 +20,9 @@ public class RuleHitHiveRecord implements Serializable {
   private Double score;
 
   @HiveTablePartition
-  private String createDate;
-  @HiveTablePartition
   private String finishDate;
+  @HiveTablePartition
+  private String createDate;
+
 
 }
